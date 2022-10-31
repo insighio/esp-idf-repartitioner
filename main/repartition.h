@@ -7,6 +7,11 @@
 #include "nvs.h"
 #include <esp_log.h>
 
+
+#define PARTITION_OTA_1_TARGET_SIZE 0x180000
+#define PARTITION_VFS_OFFSET 0x2D0000
+#define PARTITION_VFS_SIZE 0x100000
+
 static const char final_table[] = {
     0xaa, 0x50, 0x01, 0x02, 0x00, 0x90, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00, 0x6e, 0x76, 0x73, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0xaa, 0x50, 0x01, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x6f, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -31,7 +36,7 @@ void write_partition_table(const char *new_table){
 
         //essential to erase the memory where the NVS is defined
         //to pass the data integrity check in _boot.py when micropython is booting.
-        esp_err_t retNvs = spi_flash_erase_range(0x2D0000, 0x100000);
+        esp_err_t retNvs = spi_flash_erase_range(PARTITION_VFS_OFFSET, PARTITION_VFS_SIZE);
         ESP_LOGI("repartition", "NVS erased: %d", retNvs);
 
         nvs_flash_erase();
@@ -66,7 +71,7 @@ int check_upgraded_partitions() {
 
     //boot_partition->subtype == 16 is ota_0
     //boot_partition->subtype == 17 is ota_1
-    if(ota_1->size == 1572864 && boot_partition->subtype == 16){
+    if(ota_1->size == PARTITION_OTA_1_TARGET_SIZE && boot_partition->subtype == 16){
         ESP_LOGI("repartition", "Fully upgraded partition table");
         return 1;
     } 
