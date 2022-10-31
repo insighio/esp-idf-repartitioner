@@ -1,2 +1,7 @@
-# esp-idf-repartitioner
-an example project in ESP-IDF on how to repartion and flush micropython Over-The-Air
+# Simple OTA example
+
+This example is based on `esp_https_ota` component's APIs.
+
+# Link
+
+ * The main/repartition.h is copied from forum post: https://www.esp32.com/viewtopic.php?f=13&t=12004#p52962 and further adapted/enhanced to match the requirements.
